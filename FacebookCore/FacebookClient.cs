@@ -1,13 +1,15 @@
-﻿using FacebookCore.APIs;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Rest.Net;
 using Rest.Net.Interfaces;
+using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
-using static FacebookCore.FacebookCursor;
 using VideoSmart.Core.Api;
+using static FacebookCore.FacebookCursor;
 namespace FacebookCore
 {
     /// <summary>
@@ -15,7 +17,6 @@ namespace FacebookCore
     /// </summary>
     public class FacebookClient
     {
-        private FacebookAppApi _app;
 
         internal string ClientId { get; }
 
@@ -24,13 +25,12 @@ namespace FacebookCore
         internal IRestClient RestClient { get; }
         internal IHttpClientService HttpClientService{ get; }
 
-        public string GraphApiVersion { get; set; } = "v3.2";
+        public string GraphApiVersion { get; set; } = "v8.0";
 
         /// <summary>
         /// Application API
         /// </summary>
-        public FacebookAppApi App => _app ?? (_app = new FacebookAppApi(this));
-
+       
         public FacebookClient(string clientId, string clientSecret)
         {
             ClientId = clientId;
@@ -45,26 +45,7 @@ namespace FacebookCore
             GraphApiVersion = facebookConfig.GraphApiVersion;
         }
 
-        /// <summary>
-        /// Create a new instance of the Users API
-        /// </summary>
-        /// <param name="authToken">Authentication token</param>
-        /// <returns>New instance for interacting with the users API</returns>
-        public FacebookUserApi GetUserApi(string authToken)
-        {
-            return new FacebookUserApi(this, authToken);
-        }
-
-        /// <summary>
-        /// Create a new instance of the Places API
-        /// </summary>
-        /// <param name="authToken">Authentication token</param>
-        /// <returns>New instance for interacting with the places API</returns>
-        public FacebookPlacesApi GetPlacesApi(string authToken)
-        {
-            return new FacebookPlacesApi(this, authToken);
-        }
-
+    
         /// <summary>
         /// Makes a request to the Facebook http API
         /// </summary>
@@ -82,6 +63,39 @@ namespace FacebookCore
             //var test = HttpClientService.GetAsync<object>($"https://graph.facebook.com/{GraphApiVersion}{path}");
             return SerializeResponse(await RestClient.GetAsync($"/{GraphApiVersion}{path}", false));
         }
+
+        public async Task PostAsync(string path, string accessToken = null)
+        {
+            try
+            {
+                path = StandardizePath(path);
+                //path = AddAccessTokenToPathIfNeeded(path, accessToken);
+                //var content = new FormUrlEncodedContent(new Dictionary<string, string>
+                //{
+                //    {"name", "My campaign #1"},
+                //    {"objective", "LINK_CLICKS"},
+                //    {"status", "PAUSED"},
+                //    {"special_ad_categories", "NONE"},
+                //    {"access_token", accessToken}
+                //});
+                var jsonContent = JsonConvert.SerializeObject( new
+                {
+                    name = "My campaign #1",
+                    objective = "LINK_CLICKS",
+                    status = "PAUSED",
+                    special_ad_categories = new object[]{"NONE"},
+                    access_token = "accessToken"
+                });
+                var content = new StringContent(JsonConvert.SerializeObject(jsonContent), Encoding.UTF8, "application/json");
+                var result = await RestClient.PostAsync($"/{GraphApiVersion}{path}", content, false);
+            }
+            catch (Exception e)
+            {
+
+            }
+           
+        }
+
 
         private string StandardizePath(string path)
         {
@@ -143,5 +157,7 @@ namespace FacebookCore
                 throw new FacebookApiException(response.RawData.ToString(), response.Exception);
             }
         }
+
+
     }
 }

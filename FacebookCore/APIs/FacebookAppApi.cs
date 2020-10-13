@@ -1,11 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using FacebookCore.Collections;
+﻿using FacebookCore.Collections;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Rest.Net;
 using Rest.Net.Interfaces;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace FacebookCore.APIs
 {
@@ -15,7 +15,8 @@ namespace FacebookCore.APIs
     /// </summary>
     public class FacebookAppApi : ApiBaseClass
     {
-        private string _appId, _appAccessToken;
+        private readonly string _appId;
+        private string _appAccessToken;
 
         /// <summary>
         /// Facebook App API allow for making calls to API that retrieve/modify information for the general Facebook application.
@@ -44,6 +45,8 @@ namespace FacebookCore.APIs
                 request.AddParameter("client_id", FacebookClient.ClientId);
                 request.AddParameter("client_secret", FacebookClient.ClientSecret);
                 request.AddParameter("grant_type", "client_credentials");
+
+                //var test = await FacebookClient.GetAsync("oauth/access_token?client_id=363801627997764&client_secret=f2f11a5d93669bc9285cc59af73b7a47&grant_type=client_credentials");
                 IRestResponse<string> result = await FacebookClient.RestClient.ExecuteAsync(request);
 
                 var jsreader = new JsonTextReader(new StringReader(result.RawData.ToString()));
@@ -54,6 +57,7 @@ namespace FacebookCore.APIs
             }
             catch(Exception e)
             {
+                Console.WriteLine($"Exception: {e.Message}");
                 return null;
             }
         }
@@ -90,8 +94,9 @@ namespace FacebookCore.APIs
                 string appId = accessToken.Split(new char[] { '|' })[0];
                 return appId;
             }
-            catch
+            catch (Exception e)
             {
+                Console.WriteLine($"Exception: {e.Message}");
                 return null;
             }
         }

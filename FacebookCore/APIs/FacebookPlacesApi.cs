@@ -128,7 +128,7 @@ namespace FacebookCore.APIs
             }
 
             //var response = FacebookClient.Get($"/search?type=place{center}{distance}{query}{fields}{limit}", _authToken);
-            string apiQuery = $"/search?type=place{center}{distance}{query}{fields}{limitStr}";
+            string apiQuery = $"/search?type=location{center}{distance}{query}{fields}{limitStr}";
 
             PlacesCollection collection = new PlacesCollection(_fbClient, apiQuery, _authToken, null);
             await collection.Load();

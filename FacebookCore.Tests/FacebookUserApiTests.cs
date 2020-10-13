@@ -1,14 +1,15 @@
-﻿using FluentAssertions;
+﻿using FacebookCore.APIs;
+using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 using System.Threading.Tasks;
+using Xunit;
 
-namespace FacebookCore.Tests
+namespace FacebookCore.IntegrationTests
 {
     public class FacebookUserApiTests
     {
-        private readonly FacebookClient _client;
-        private readonly string _accessToken;
+        private readonly FacebookUserApi _facebookUserApi;
 
         public FacebookUserApiTests()
         {
@@ -23,36 +24,33 @@ namespace FacebookCore.Tests
             var clientId = configurationRoot["client_id"];
             var clientSecret = configurationRoot["client_secret"];
 
-            _accessToken = configurationRoot["access_token"];
-            _client = new FacebookClient(clientId, clientSecret);
+            var accessToken = configurationRoot["access_token"];
+            _facebookUserApi = new FacebookUserApi(new FacebookClient(clientId, clientSecret), accessToken);
         }
 
-        
+        [Fact]
         public async Task ShouldExtendUserToken()
         {
-            var userApi = _client.GetUserApi(_accessToken);
 
-            var extendResult = await userApi.RequestExtendAccessToken();
+            var extendResult = await _facebookUserApi.RequestExtendAccessToken();
 
             extendResult["access_token"].ToString().Should().NotBeNullOrWhiteSpace();
         }
 
-        
+        [Fact]
         public async Task ShouldGetUserInfo()
         {
-            var userApi = _client.GetUserApi(_accessToken);
-
-            var extendResult = await userApi.RequestInformationAsync();
+       
+            var extendResult = await _facebookUserApi.RequestInformationAsync();
 
             extendResult["id"].ToString().Should().NotBeNullOrWhiteSpace();
         }
 
-        
+        [Fact]
         public async Task ShouldGetUserMetaInfo()
         {
-            var userApi = _client.GetUserApi(_accessToken);
-
-            var metadata = await userApi.RequestMetaDataAsync();
+          
+            var metadata = await _facebookUserApi.RequestMetaDataAsync();
 
             metadata["metadata"].ToString().Should().NotBeNullOrWhiteSpace();
         }
