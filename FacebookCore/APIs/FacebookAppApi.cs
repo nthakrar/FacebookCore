@@ -52,7 +52,7 @@ namespace FacebookCore.APIs
                 _appAccessToken = json["access_token"].ToString();
                 return _appAccessToken;
             }
-            catch
+            catch(Exception e)
             {
                 return null;
             }

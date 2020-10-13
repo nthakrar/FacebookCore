@@ -14,13 +14,11 @@
     <AssemblyVersion>2.1.13.0</AssemblyVersion>
     <FileVersion>2.1.13.0</FileVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageReleaseNotes>Update to .NET Standard 2.0.
-Library version also updated to 2.0.0 to be consisted with the new 2.0.
-For erlier .NET Core or .NET Standard versions, use version &lt; 2.0.0</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Rest.Net" Version="2.2.1" />
+    <PackageReference Include="VideoSmart.Core.Api" Version="1.0.1" />
   </ItemGroup>
 
 </Project>

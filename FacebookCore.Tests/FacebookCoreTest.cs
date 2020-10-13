@@ -1,14 +1,13 @@
-using Microsoft.Extensions.Configuration;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Threading.Tasks;
 using FacebookCore.APIs;
-using FluentAssertions;
 using FacebookCore.Collections;
+using FluentAssertions;
+using Microsoft.Extensions.Configuration;
+using Xunit;
 
-namespace FacebookCore.Tests
+namespace FacebookCore.IntegrationTests
 {
-    [TestClass]
     public class FacebookCoreTest
     {
         private readonly FacebookClient _client;
@@ -29,21 +28,21 @@ namespace FacebookCore.Tests
             _client = new FacebookClient(clientId, clientSecret);
         }
 
-        [TestMethod]
+        
         public async Task ShouldGetApplicationId()
         {
             string appId = await _client.App.GetAppIdAsync();
             appId.Should().NotBeNullOrEmpty();
         }
 
-        [TestMethod]
+        [Fact]
         public async Task ShouldBeAbleToGetAccessToken()
         {
             string token = await _client.App.GetAccessTokenAsync();
             token.Should().NotBeNullOrEmpty();
         }
 
-        [TestMethod]
+        
         public async Task ShouldBeAbleToGetTestUsersList()
         {
             AppTestUsersCollection users = await _client.App.GetTestUsersAsync();
@@ -51,7 +50,7 @@ namespace FacebookCore.Tests
             users.Count.Should().BeGreaterThan(0);
         }
 
-        [TestMethod]
+        
         public async Task ShouldBeAbleToGetPlaces()
         {
             string token = await _client.App.GetAccessTokenAsync();
@@ -66,7 +65,7 @@ namespace FacebookCore.Tests
             //placesApi.PlacesSearch("-73.9921", "40.7304", 1000, null, null, null, 0);
         }
 
-        [TestMethod]
+        
         public async Task ShouldBeAbleToLoadMorePlaces()
         {
             string token = await _client.App.GetAccessTokenAsync();
@@ -79,7 +78,7 @@ namespace FacebookCore.Tests
             places.Count.Should().Be(100, "It loaded more results");
         }
 
-        [TestMethod]
+        
         public async Task ShouldBeAbleToGetPlacesAfterAndBefore()
         {
             string token = await _client.App.GetAccessTokenAsync();

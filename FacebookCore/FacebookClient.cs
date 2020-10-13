@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Specialized;
-using System.IO;
-using System.Net;
-using System.Threading.Tasks;
-using FacebookCore.APIs;
+﻿using FacebookCore.APIs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Rest.Net;
 using Rest.Net.Interfaces;
+using System.IO;
+using System.Net;
+using System.Threading.Tasks;
 using static FacebookCore.FacebookCursor;
-
+using VideoSmart.Core.Api;
 namespace FacebookCore
 {
     /// <summary>
@@ -19,11 +17,12 @@ namespace FacebookCore
     {
         private FacebookAppApi _app;
 
-        internal string ClientId { get; private set; }
+        internal string ClientId { get; }
 
-        internal string ClientSecret { get; private set; }
+        internal string ClientSecret { get; }
 
-        internal IRestClient RestClient { get; private set; }
+        internal IRestClient RestClient { get; }
+        internal IHttpClientService HttpClientService{ get; }
 
         public string GraphApiVersion { get; set; } = "v3.2";
 
@@ -37,6 +36,7 @@ namespace FacebookCore
             ClientId = clientId;
             ClientSecret = clientSecret;
             RestClient = new RestClient("https://graph.facebook.com/");
+            HttpClientService = new HttpClientService();
         }
 
         public FacebookClient(FacebookConfig facebookConfig)
@@ -79,6 +79,7 @@ namespace FacebookCore
             path = AddAccessTokenToPathIfNeeded(path, accessToken);
             path = AddCursorToPathIfNeeded(path, cursor, cursorDirection);
 
+            //var test = HttpClientService.GetAsync<object>($"https://graph.facebook.com/{GraphApiVersion}{path}");
             return SerializeResponse(await RestClient.GetAsync($"/{GraphApiVersion}{path}", false));
         }
 

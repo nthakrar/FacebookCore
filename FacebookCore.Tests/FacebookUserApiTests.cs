@@ -1,12 +1,10 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.Configuration;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace FacebookCore.Tests
 {
-    [TestClass]
     public class FacebookUserApiTests
     {
         private readonly FacebookClient _client;
@@ -29,7 +27,7 @@ namespace FacebookCore.Tests
             _client = new FacebookClient(clientId, clientSecret);
         }
 
-        [TestMethod]
+        
         public async Task ShouldExtendUserToken()
         {
             var userApi = _client.GetUserApi(_accessToken);
@@ -39,7 +37,7 @@ namespace FacebookCore.Tests
             extendResult["access_token"].ToString().Should().NotBeNullOrWhiteSpace();
         }
 
-        [TestMethod]
+        
         public async Task ShouldGetUserInfo()
         {
             var userApi = _client.GetUserApi(_accessToken);
@@ -49,7 +47,7 @@ namespace FacebookCore.Tests
             extendResult["id"].ToString().Should().NotBeNullOrWhiteSpace();
         }
 
-        [TestMethod]
+        
         public async Task ShouldGetUserMetaInfo()
         {
             var userApi = _client.GetUserApi(_accessToken);
